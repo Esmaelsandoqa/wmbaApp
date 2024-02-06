@@ -1,0 +1,89 @@
+﻿@model wmbaApp.ViewModels.PlayerLinUpVM
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GameId" class="control-label"></label>
+                <select asp-for="GameId" class="form-control" asp-items="ViewBag.games" required>
+                    <option value="">Select a Game</option>
+                </select>
+                <span asp-validation-for="GameId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TeamId" class="control-label"></label>
+                <select asp-for="TeamId" id="TeamID" class="form-control" asp-items="ViewBag.teams" required>
+                    <option value="">Select a Team</option>
+                </select>
+                <span asp-validation-for="TeamId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlayersIds" class="control-label"></label>
+                <select asp-for="PlayersIds" id="PlayerID" class="form-control" multiple="multiple" asp-items="ViewBag.players" required>
+                </select>
+                <span asp-validation-for="PlayersIds" class="text-danger"></span>
+            </div>
+
+
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        GenerateContextHelp(["<p>This page lets you create a team.</p>",
+            "<p>Enter valid information into each field and click the Create button to save your changes.</p>",
+            "<p>Click the Back to Teams list button to go back to the teams list.</p>"]);
+    </script>
+
+
+    <script>
+        $("#TeamID").change(function () {
+
+            $("#PlayerID").empty();
+            $("#PlayerID").append("<option>Choose Players</option>");
+
+            var TeamId = $("#TeamID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "/PlayersLineUp/GetPlayerByTeamId",
+                data: { teamId: TeamId },
+                success: function (res) {
+                    console.log(res);
+                    $.each(res, function (i, e) {
+                        console.log(e);
+                        $("#PlayerID").append("<option value='" + e.id + "'>" + e.fullName + "</option>");
+
+                    });
+
+                }
+
+            });
+
+        });
+    </script>
+}

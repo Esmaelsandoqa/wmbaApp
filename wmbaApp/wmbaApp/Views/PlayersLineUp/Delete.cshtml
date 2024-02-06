@@ -1,0 +1,119 @@
+﻿@model wmbaApp.Models.PlayersLineUp
+@*
+<partial name="_ViewHeading" /> *@
+<div>
+    <h4>Player Line Up</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt class="col-sm-2">
+            Team
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Team.TmName)
+        </dd>
+        <dt class="col-sm-2">
+            Team
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Game.GameLocation)
+        </dd>
+        <dt class="col-sm-2">
+            Player
+        </dt>
+        <dd class="col-sm-10">
+        @foreach (var player in Model.Players)
+        {  
+            <span>@player.PlyrFirstName</span>
+            <span>, </span>
+           
+        }
+        </dd>
+    </dl>
+
+    @{
+        // if (!ViewData.ModelState.IsValid)
+        // {
+        //     /* redirect to player index with the team name as a search string.
+        //     * Can be changed later redirect to a specific index that shows only one team's players at a time */
+        //     <form asp-controller="Game" asp-action="Index" asp-route-TeamID="@Model?.player">
+        //         <div style="color: #F00;">@Html.ValidationSummary()</div>
+        //         <input type="submit" value="View Players" class="btn btn-link" />
+        //     </form>
+        //     <br />
+        // }
+    }
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        GenerateContextHelp(["<p>This page lets you delete a game.</p>",
+            "<p>Click the Delete button to delete a game.</p>",
+            "<p>Click the Back to Games list button to go back to the games list.</p>"]);
+    </script>
+     <script>
+        $("#TeamID").change(function () {
+
+            $("#PlayerID").empty();
+            $("#PlayerID").append("<option>Choose Players</option>");
+
+            var TeamId = $("#TeamID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "/PlayersLineUp/GetPlayerByTeamId",
+                data: { teamId: TeamId },
+                success: function (res) {
+                    console.log(res);
+                    $.each(res, function (i, e) {
+                        console.log(e);
+                        $("#PlayerID").append("<option value='" + e.id + "'>" + e.fullName + "</option>");
+
+                    });
+
+                }
+
+            });
+
+        });
+    </script>
+    <script>
+        $("#TeamID").change(function () {
+
+            $("#PlayerID").empty();
+            $("#PlayerID").append("<option>Choose Players</option>");
+
+            var TeamId = $("#TeamID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "/PlayersLineUp/GetPlayerByTeamId",
+                data: { teamId: TeamId },
+                success: function (res) {
+                    console.log(res);
+                    $.each(res, function (i, e) {
+                        console.log(e);
+                        $("#PlayerID").append("<option value='" + e.id + "'>" + e.fullName + "</option>");
+
+                    });
+
+                }
+
+            });
+
+        });
+    </script>
+}
